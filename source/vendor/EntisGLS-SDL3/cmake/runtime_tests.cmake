@@ -1,0 +1,61 @@
+# Synthetic tests remain available without original game data or diagnostic probes.
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    find_package(Threads REQUIRED)
+    add_executable(sdl_system_test EXCLUDE_FROM_ALL tests/integration/platform/system_test.cpp)
+    target_link_libraries(sdl_system_test PRIVATE gls4_sdl Threads::Threads)
+endif()
+
+if(NOT ANDROID AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    add_executable(motion_atlas_projection_test EXCLUDE_FROM_ALL tests/unit/launcher/atlas_projection_test.cpp)
+    target_include_directories(motion_atlas_projection_test PRIVATE "${STUDYSTEADY_ROOT}/native")
+    add_executable(mobile_orientation_test EXCLUDE_FROM_ALL tests/unit/platform/mobile_orientation_test.cpp
+        native/platform/sdl/mobile_orientation.cpp)
+    target_link_libraries(mobile_orientation_test PRIVATE study_sdl_platform)
+    add_executable(game_save_directory_test EXCLUDE_FROM_ALL tests/unit/launcher/save_directory_test.cpp
+        native/io/save_directory.cpp native/runtime/cotopha_port/legacy_atomic_path.cpp)
+    target_compile_definitions(game_save_directory_test PRIVATE STUDYSTEADY_PLATFORM_SDL3=1)
+    target_link_libraries(game_save_directory_test PRIVATE entis_game_files)
+    add_executable(legacy_atomic_path_test EXCLUDE_FROM_ALL tests/unit/runtime/test_legacy_atomic_path.cpp
+        native/runtime/cotopha_port/legacy_atomic_path.cpp)
+    target_include_directories(legacy_atomic_path_test PRIVATE "${STUDYSTEADY_ROOT}/native")
+    target_link_libraries(legacy_atomic_path_test PRIVATE Threads::Threads)
+    # Assertions execute the failure injections as well as checking their results.
+    target_compile_options(legacy_atomic_path_test PRIVATE -UNDEBUG)
+    add_executable(branch_guide_store_test EXCLUDE_FROM_ALL tests/unit/runtime/test_branch_guide_store.cpp
+        native/runtime/cotopha_port/branch_guide_store.cpp)
+    target_include_directories(branch_guide_store_test PRIVATE "${STUDYSTEADY_ROOT}/native")
+    target_link_libraries(branch_guide_store_test PRIVATE Threads::Threads)
+    target_compile_options(branch_guide_store_test PRIVATE -UNDEBUG)
+    add_executable(psb_key_resolver_test EXCLUDE_FROM_ALL tests/unit/launcher/psb_key_resolver_test.cpp)
+    target_link_libraries(psb_key_resolver_test PRIVATE entis_psb_keys)
+    add_executable(psb_key_settings_test EXCLUDE_FROM_ALL tests/unit/launcher/psb_key_settings_test.cpp)
+    target_link_libraries(psb_key_settings_test PRIVATE entis_psb_keys)
+    if(ENTISGLS_BUILD_DIAGNOSTICS)
+    add_executable(motion_psb_key_callback_test EXCLUDE_FROM_ALL tests/probes/emote/tjs_runtime/psb_key_resolver_probe.cpp)
+    target_link_libraries(motion_psb_key_callback_test PRIVATE motion_apk_runtime)
+    endif()
+    add_executable(make_csx_fixture EXCLUDE_FROM_ALL tests/fixtures/make_csx_fixture.cpp "${LEGACY_HEAP_SDK}"
+        native/compatibility/games/compatibility_profiles.cpp native/platform/sdl/game_font_aliases.cpp native/platform/sdl/opentype_font.cpp)
+    target_link_libraries(make_csx_fixture PRIVATE legacy_objects legacy_foundation gls4_sdl motion_apk_runtime freetype)
+    add_executable(legacy_speech_test EXCLUDE_FROM_ALL tests/integration/cotopha/legacy_speech_test.cpp "${LEGACY_HEAP_SDK}"
+        native/compatibility/games/compatibility_profiles.cpp native/platform/sdl/game_font_aliases.cpp native/platform/sdl/opentype_font.cpp)
+    target_link_libraries(legacy_speech_test PRIVATE legacy_objects legacy_foundation gls4_sdl motion_apk_runtime freetype)
+    add_executable(legacy_setup_fonts_test EXCLUDE_FROM_ALL tests/integration/cotopha/legacy_setup_fonts_test.cpp "${LEGACY_HEAP_SDK}"
+        native/compatibility/games/compatibility_profiles.cpp native/platform/sdl/game_font_aliases.cpp native/platform/sdl/opentype_font.cpp)
+    target_link_libraries(legacy_setup_fonts_test PRIVATE legacy_objects legacy_foundation gls4_sdl motion_apk_runtime freetype)
+    add_executable(legacy_emote_api_test EXCLUDE_FROM_ALL tests/integration/cotopha/legacy_emote_api_test.cpp "${LEGACY_HEAP_SDK}"
+        native/compatibility/games/compatibility_profiles.cpp native/platform/sdl/game_font_aliases.cpp native/platform/sdl/opentype_font.cpp)
+    target_link_libraries(legacy_emote_api_test PRIVATE legacy_objects legacy_foundation gls4_sdl motion_apk_runtime freetype)
+    add_executable(launcher_config_test EXCLUDE_FROM_ALL tests/integration/launcher/game_config_test.cpp
+        native/launcher/game_config.cpp native/launcher/archive_launch_fallback.cpp)
+    target_link_libraries(launcher_config_test PRIVATE gls4_sdl)
+    add_executable(launcher_fonts_test EXCLUDE_FROM_ALL tests/integration/launcher/generic_fonts_test.cpp
+        native/platform/sdl/game_font_aliases.cpp native/platform/sdl/opentype_font.cpp native/compatibility/games/compatibility_profiles.cpp)
+    target_link_libraries(launcher_fonts_test PRIVATE gls4_sdl freetype)
+    add_executable(launcher_sphere_fonts_test EXCLUDE_FROM_ALL tests/integration/launcher/sphere_fonts_test.cpp
+        native/platform/sdl/game_font_aliases.cpp native/platform/sdl/opentype_font.cpp native/compatibility/games/compatibility_profiles.cpp)
+    target_link_libraries(launcher_sphere_fonts_test PRIVATE gls4_sdl freetype)
+    add_executable(launcher_hd_images_test EXCLUDE_FROM_ALL tests/integration/launcher/hd_images_test.cpp
+        native/platform/sdl/game_font_aliases.cpp native/platform/sdl/opentype_font.cpp native/compatibility/games/compatibility_profiles.cpp)
+    target_link_libraries(launcher_hd_images_test PRIVATE gls4_sdl freetype)
+endif()

@@ -1,0 +1,16 @@
+/build/
+/work/
+/testgames/
+/logs/
+/shots/
+/hd/
+/mods/build/
+/design/assets/
+/design/icon_src/
+/design/icon/AppIcon.*
+/analysis/
+/tools/eri_export/build/
+/vendor/EntisGLS-SDL3/build/
+*.pyc
+__pycache__/
+.DS_Store
